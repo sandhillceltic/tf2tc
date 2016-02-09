@@ -1,0 +1,9 @@
+Date : 1/4/15
+Author : Thomas Woods
+Program : Steam Uber Tracker
+Notes :
+
+The name of this needs to be changed eventually, as the program has nothing to do with steam.
+Something to do with Team Fortress 2 would be more accurate.
+This is the first build of the server that does next to nothing besides accepting a connection.
+It will also be used to see if the port is listening, so that I can go back and reassign the port.
