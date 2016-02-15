@@ -1,3 +1,1 @@
-﻿  steamubertracker.cpp
-c:\users\thomas\documents\visual studio 2015\projects\steamubertracker\steamubertracker\steamubertracker.cpp(33): warning C4101: 'sock_LISTEN': unreferenced local variable
-  steamubertracker.vcxproj -> C:\Users\Thomas\documents\visual studio 2015\Projects\steamubertracker\Debug\steamubertracker.exe
+﻿  steamubertracker.vcxproj -> C:\Users\Thomas\Desktop\C projects\tf2tc\Debug\steamubertracker.exe

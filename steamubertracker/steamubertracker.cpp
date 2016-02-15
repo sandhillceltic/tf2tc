@@ -33,20 +33,26 @@ int main()
 	SOCKET sock_LISTEN;
 	SOCKET sock_CONNECTION;
 
-	const CHAR addr[15] = "192.168.1.1";
+	const CHAR addr[15] = "127.0.0.1";
 	char buffer [sizeof(in_addr)];
+
+	printf("Last error code was(1): %d\n", WSAGetLastError());
 
 	sock_CONNECTION = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	ADDRESS.sin_addr.s_addr = inet_pton(AF_INET, (const CHAR*)&addr, &buffer);
 	ADDRESS.sin_family = AF_INET;
 	ADDRESS.sin_port = htons(444);
 
+	printf("Last error code was(2): %d\n", WSAGetLastError());
+
 
 	bind(sock_CONNECTION, (SOCKADDR *)&ADDRESS, AddressSize);
 
+	printf("Last error code was(3): %d\n", WSAGetLastError());
+
 	listen(sock_CONNECTION, 5);
 
-	printf("Last error code was: %d", WSAGetLastError());   
+	printf("Last error code was(4): %d\n", WSAGetLastError());
 	//note to self: don't use %x when referring to WSAGetLastError, returns untrue value outside WSAerror regular field
 	pause();
 	return 0;
