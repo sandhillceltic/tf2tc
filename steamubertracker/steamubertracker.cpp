@@ -39,7 +39,7 @@ int main()
 	printf("Last error code was(1): %d\n", WSAGetLastError());
 
 	sock_CONNECTION = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	ADDRESS.sin_addr.s_addr = inet_pton(AF_INET, (const CHAR*)&addr, &buffer);
+	ADDRESS.sin_addr.s_addr = INADDR_ANY;   //fixed to accept any network interface
 	ADDRESS.sin_family = AF_INET;
 	ADDRESS.sin_port = htons(444);
 
