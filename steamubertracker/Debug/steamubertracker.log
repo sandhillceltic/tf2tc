@@ -1,4 +1,2 @@
-﻿  steamubertracker.cpp
-c:\users\thomas\desktop\c projects\tf2tc\steamubertracker\steamubertracker.cpp(33): warning C4101: 'sock_LISTEN': unreferenced local variable
-c:\users\thomas\desktop\c projects\tf2tc\steamubertracker\steamubertracker.cpp(37): warning C4101: 'buffer': unreferenced local variable
+﻿  tf2tc_server.cpp
   steamubertracker.vcxproj -> C:\Users\Thomas\Desktop\C projects\tf2tc\Debug\steamubertracker.exe
