@@ -43,16 +43,16 @@ int main()
 
 
 
+	char textaddress[14] = "192.168.1.1";
+	SOCKADDR_IN client_connection;
+	client_connection.sin_family = AF_INET;
+	client_connection.sin_port = (USHORT)(444);
+
+	client_connection.sin_addr.S_un.S_addr = (unsigned long)("192.168.1.1");
+	//S_un contains several children that take the address in different forms
+
+
 	int connection_success = -1;
-	SOCKADDR client_connection;
-	client_connection.sa_family = AF_INET;
-
-	//turning the print address into something the computer can understand
-	char connection_address[14] = "192.168.1.1";
-	char na_converted[sizeof(in_addr)];
-	inet_pton(AF_INET, (PCSTR)&connection_address, &na_converted);
-
-	client_connection.sa_data = na_converted;    //not sure why this value isn't modifiable
 	connection_success = connect(client_socket, (SOCKADDR *)&client_connection, sizeof(client_connection));
 	if (connection_success != 0)
 	{
@@ -60,6 +60,8 @@ int main()
 		pause();
 		return 2;
 	}
+
+	printf("The last WSA error was: %d", WSAGetLastError());
 
 
 	pause();
