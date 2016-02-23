@@ -20,41 +20,45 @@ int main()
 	
 	
 	
-	int wsasuccessful;
+	int wsa_success;
 	WSAData WinSockData;
 	WORD DLLVERSION;
 	DLLVERSION = MAKEWORD(2, 1);
-	wsasuccessful = WSAStartup(DLLVERSION, &WinSockData);
-	if (wsasuccessful != 0)
-	{
-		printf("Error %d while starting WSA\n", wsasuccessful);
+	wsa_success = WSAStartup(DLLVERSION, &WinSockData);
+	if (wsa_success != 0)
+	{	
+		printf("Error %d while starting WSA\n", WSAGetLastError());
 		pause();
 		return 1;
 	}
 
+
+
+	SOCKET uc_socket;
+	uc_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (uc_socket == INVALID_SOCKET)
+	{
+		printf("Error %d while creating socket\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+	
 
 
 	SOCKADDR_IN ADDRESS;
 	int AddressSize = sizeof(ADDRESS);
-	SOCKET uc_socket;
+	
 
 
-
-	uc_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	ADDRESS.sin_addr.s_addr = INADDR_ANY;   //fixed to accept any network interface
 	ADDRESS.sin_family = AF_INET;
 	ADDRESS.sin_port = htons(444);
-	if (WSAGetLastError() != 0)
-	{
-		printf("Error %d while establishing socket\n", WSAGetLastError());
-		pause();
-		return 1;
-	}
 
 
 
-	bind(uc_socket, (SOCKADDR *)&ADDRESS, AddressSize);
-	if (WSAGetLastError() != 0)
+	int bind_success;
+	bind_success = bind(uc_socket, (SOCKADDR *)&ADDRESS, AddressSize);
+	if (bind_success != 0)
 	{
 		printf("Error %d while binding socket\n", WSAGetLastError());
 		pause();
@@ -63,8 +67,9 @@ int main()
 
 
 
-	listen(uc_socket, 12);
-	if (WSAGetLastError() != 0)
+	int listen_success;
+	listen_success = listen(uc_socket, 12);
+	if (listen_success != 0)
 	{
 		printf("Error %d while binding socket\n", WSAGetLastError());
 		pause();
@@ -75,10 +80,19 @@ int main()
 	SOCKET c_socket;
 	SOCKADDR client_sock;
 	int client_sock_size = sizeof(client_sock);
+	printf("Socket created; Set to listen for incoming connections");
 	c_socket = accept(uc_socket, (SOCKADDR *)&client_sock, &client_sock_size);
+	if (c_socket == INVALID_SOCKET)
+	{
+		printf("Error %d while accepting connection request\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+	else
+	{
+		printf("Connection established!");
+	}
 
-
-
-	//pause();
+	pause();
 	return 0;
 }

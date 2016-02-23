@@ -43,16 +43,16 @@ int main()
 
 
 
-	char textaddress[14] = "192.168.1.1";
 	SOCKADDR_IN client_connection;
 	client_connection.sin_family = AF_INET;
 	client_connection.sin_port = (USHORT)(444);
 
-	client_connection.sin_addr.S_un.S_addr = (unsigned long)("192.168.1.1");
+	client_connection.sin_addr.S_un.S_addr = (unsigned long)("0.0.0.0");
 	//S_un contains several children that take the address in different forms
 
 
 	int connection_success = -1;
+	printf("Connection started!");
 	connection_success = connect(client_socket, (SOCKADDR *)&client_connection, sizeof(client_connection));
 	if (connection_success != 0)
 	{
@@ -60,7 +60,7 @@ int main()
 		pause();
 		return 2;
 	}
-
+	printf("The client has found a server!");
 	printf("The last WSA error was: %d", WSAGetLastError());
 
 

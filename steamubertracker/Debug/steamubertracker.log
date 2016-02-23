@@ -1,2 +1,3 @@
-﻿  tf2tc_server.cpp
-  steamubertracker.vcxproj -> C:\Users\Thomas\Desktop\C projects\tf2tc\Debug\steamubertracker.exe
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (steamubertracker.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  tf2tc_server.cpp
+  steamubertracker.vcxproj -> C:\Users\Thomas\Desktop\C projects\tf2tc\Debug\tf2tc_server.exe
