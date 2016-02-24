@@ -20,11 +20,10 @@ int main()
 	
 	
 	
-	int wsa_success;
 	WSAData WinSockData;
 	WORD DLLVERSION;
 	DLLVERSION = MAKEWORD(2, 1);
-	wsa_success = WSAStartup(DLLVERSION, &WinSockData);
+	int wsa_success = WSAStartup(DLLVERSION, &WinSockData);
 	if (wsa_success != 0)
 	{	
 		printf("Error %d while starting WSA\n", WSAGetLastError());
@@ -56,8 +55,7 @@ int main()
 
 
 
-	int bind_success;
-	bind_success = bind(uc_socket, (SOCKADDR *)&ADDRESS, AddressSize);
+	int bind_success = bind(uc_socket, (SOCKADDR *)&ADDRESS, AddressSize);
 	if (bind_success != 0)
 	{
 		printf("Error %d while binding socket\n", WSAGetLastError());
@@ -67,20 +65,19 @@ int main()
 
 
 
-	int listen_success;
-	listen_success = listen(uc_socket, 12);
+	int listen_success = listen(uc_socket, 12);
 	if (listen_success != 0)
 	{
-		printf("Error %d while binding socket\n", WSAGetLastError());
+		printf("Error %d while setting socket to listen\n", WSAGetLastError());
 		pause();
 		return 1;
 	}
 
 
 	SOCKET c_socket;
-	SOCKADDR client_sock;
+	SOCKADDR_IN client_sock;   //changed SOCKADDR to SOCKADDR_IN
 	int client_sock_size = sizeof(client_sock);
-	printf("Socket created; Set to listen for incoming connections");
+	printf("Socket created; Set to listen for incoming connections\n");
 	c_socket = accept(uc_socket, (SOCKADDR *)&client_sock, &client_sock_size);
 	if (c_socket == INVALID_SOCKET)
 	{
@@ -90,7 +87,7 @@ int main()
 	}
 	else
 	{
-		printf("Connection established!");
+		printf("Connection established!\n");
 	}
 
 	pause();
