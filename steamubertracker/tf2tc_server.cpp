@@ -1,95 +1,101 @@
 /*
 Author - Thomas "Starfroot!" Woods
 Program - Team Fortress Team Coordinator (TFTC) (server)
+Copyright (c) 2015
+This material may be used freely under the following conditions
+	- This content is not used for gain, including but not limited to personal, professional, and monetary
+	- This notice must remain at the top of this content in any form that it is used.
+	- Credit must always be provided to the creator of this content, regardless of presentation or medium of usage
 */
 
-/*
-Error codes - 
-1) WSA failed to start
-2) Socket failed to instantiate
-3) Socket failed to bind
-4) Socket failed to listen
-
-*/
 #include "stdafx.h"
 
 using namespace std;
 
 int main()
 {
-	
-	
-	
-	WSAData WinSockData;
-	WORD DLLVERSION;
-	DLLVERSION = MAKEWORD(2, 1);
-	int wsa_success = WSAStartup(DLLVERSION, &WinSockData);
-	if (wsa_success != 0)
-	{	
-		printf("Error %d while starting WSA\n", WSAGetLastError());
+	//starting message
+	printf("Server is launching...\n");
+
+	//setting up WSA
+	WSADATA wsaData;
+	int WSAcheck = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	//checking WSA
+	if (WSAcheck != 0)
+	{
+		printf("WSA couldn't start correctly\n");
 		pause();
 		return 1;
 	}
 
+	//setting up the socket
+	SOCKET serversock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-
-	SOCKET uc_socket;
-	uc_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (uc_socket == INVALID_SOCKET)
+	//checking socket's validity
+	if (serversock == INVALID_SOCKET)
 	{
-		printf("Error %d while creating socket\n", WSAGetLastError());
+		printf("Socket isn't valid: %d\n", WSAGetLastError());
 		pause();
 		return 1;
 	}
+
+	//setting up the sockaddr_in for bind()
+	sockaddr_in server_sockaddr;
+	server_sockaddr.sin_family = AF_INET;
+	server_sockaddr.sin_addr.s_addr = INADDR_ANY;
+	server_sockaddr.sin_port = htons(25565);
+
+	//binding the socket.
+	int bindcheck = bind(serversock, (struct sockaddr *)&server_sockaddr, sizeof(server_sockaddr));
+
+	//checking to see if the bind worked, and calling the error if it doesn't
+	if (bindcheck != 0)
+	{
+		printf("Bind failed: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+
+	//setting the socket to listen
+	int listencheck = listen(serversock, 10);
+
+	//checking to make sure the listen command was successful
+	if (listencheck != 0)
+	{
+		printf("Listen failed: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+
+	//telling that the socket is being set to listen
+	printf("Socket established; Listening for incoming connections\n");
+
+	//accepting any incoming connections
+	SOCKET clientsocket = accept(serversock, NULL, NULL);
+
+	//checking the socket
+	if (clientsocket == INVALID_SOCKET)
+	{
+		printf("Connecting socket isn't valid or has timed out: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+
+	//setting up to receive data from a connected client
+	char recv_buffer[7];
+	printf("The socket is ready to receive data...\n");
+	int bytesreceived = recv(clientsocket, recv_buffer, sizeof(recv_buffer), NULL);
+
+	if(bytesreceived == SOCKET_ERROR)
+	{
+		printf("Error in receiveing data from the client: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+	printf("bytes received: %d | message: %s\n", bytesreceived, recv_buffer);
 	
-
-
-	SOCKADDR_IN ADDRESS;
-	int AddressSize = sizeof(ADDRESS);
-	
-
-
-	ADDRESS.sin_addr.s_addr = INADDR_ANY;   //fixed to accept any network interface
-	ADDRESS.sin_family = AF_INET;
-	ADDRESS.sin_port = htons(444);
-
-
-
-	int bind_success = bind(uc_socket, (SOCKADDR *)&ADDRESS, AddressSize);
-	if (bind_success != 0)
-	{
-		printf("Error %d while binding socket\n", WSAGetLastError());
-		pause();
-		return 1;
-	}
-
-
-
-	int listen_success = listen(uc_socket, 12);
-	if (listen_success != 0)
-	{
-		printf("Error %d while setting socket to listen\n", WSAGetLastError());
-		pause();
-		return 1;
-	}
-
-
-	SOCKET c_socket;
-	SOCKADDR_IN client_sock;   //changed SOCKADDR to SOCKADDR_IN
-	int client_sock_size = sizeof(client_sock);
-	printf("Socket created; Set to listen for incoming connections\n");
-	c_socket = accept(uc_socket, (SOCKADDR *)&client_sock, &client_sock_size);
-	if (c_socket == INVALID_SOCKET)
-	{
-		printf("Error %d while accepting connection request\n", WSAGetLastError());
-		pause();
-		return 1;
-	}
-	else
-	{
-		printf("Connection established!\n");
-	}
-
+	//ending the program
 	pause();
 	return 0;
 }

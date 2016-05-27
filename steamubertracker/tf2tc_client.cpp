@@ -1,69 +1,88 @@
 /*
 Author - Thomas "Starfroot!" Woods
-Program - Team Fortress Team Coordinator (TFTC) (server)
+Program - Team Fortress Team Coordinator (TFTC) (client)
+Copyright (c) 2015
+This material may be used freely under the following conditions
+	- This content is not used for gain, including but not limited to personal, professional, and monetary
+	- This notice must remain at the top of this content in any form that it is used.
+	- Credit must always be provided to the creator of this content, regardless of presentation or medium of usage
 */
 
-/*
-Error codes -
-1) WSA failed to start
-2) Socket failed to instantiate
-3) Socket failed to bind
-4) Socket failed to listen
+//make the code unicode friendly
 
-*/
 #include "stdafx.h"
 
 using namespace std;
 
-
 int main()
 {
-	int wsasuccessful = -1;
-	WSAData WinSockData;
-	WORD DLLVERSION;
-	DLLVERSION = MAKEWORD(2, 1);
-	wsasuccessful = WSAStartup(DLLVERSION, &WinSockData);
-	if (wsasuccessful != 0)
+	//setting up WSA
+	WSADATA wsaData;
+	int WSAcheck = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	//checking WSA
+	if (WSAcheck != 0)
 	{
-		printf("Error %d in client while starting WSA\n", WSAGetLastError());
+		printf("WSA couldn't start correctly\n");
 		pause();
 		return 1;
 	}
 
+	//setting up the socket
+	SOCKET clientsock = socket(AF_INET, SOCK_STREAM, 0);
 
-
-	SOCKET client_socket;
-	client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (WSAGetLastError() != 0)
+	//checking socket's validity
+	if (clientsock == INVALID_SOCKET)
 	{
-		printf("Error %d in client while instantiating socket\n", WSAGetLastError());
+		printf("Socket isn't valid: %d\n", WSAGetLastError());
 		pause();
 		return 1;
 	}
 
+	//setting up the struct with the connection info
+	sockaddr_in serverinfo;
+	serverinfo.sin_family = AF_INET;
+	serverinfo.sin_port = htons(25565);
 
+	//putting the address to connect to into binary form
+	const char outgoingaddress[INET_ADDRSTRLEN] = "127.0.0.1";
+	int convertcheck = InetPton(AF_INET, (PCSTR)&outgoingaddress, (void*)&serverinfo.sin_addr.s_addr);
 
-	SOCKADDR_IN client_connection;
-	client_connection.sin_family = AF_INET;
-	client_connection.sin_port = htons(444);
-	client_connection.sin_addr.S_un.S_addr = INADDR_LOOPBACK;
-	//S_un contains several children that take the address in different forms
-
-
-	int connection_success = -1;
-	printf("before connect()\n");  //for debugging
-	connection_success = connect(client_socket, (SOCKADDR *)&client_connection, sizeof(client_connection));
-	printf("after conenct()\n");  //for debugging
-	if (connection_success != 0)
+	//checking Inetpton() to make sure the function wrote the address to the variable
+	if (convertcheck != 1)
 	{
-		printf("Error %d in client while connecting socket\n", WSAGetLastError());
+		printf("The convertion of the address from P to N failed\n");
 		pause();
-		return 2;
+		return 1;
 	}
-	printf("The client has found a server!\n");
-	printf("The last WSA error was: %d\n", WSAGetLastError());
 
+	//connecting
+	printf("Attemping to connect...\n");
+	int connectcheck = connect(clientsock, (SOCKADDR *)&serverinfo, sizeof(serverinfo));
 
+	//checking the connection
+	if (connectcheck == SOCKET_ERROR)
+	{
+		printf("Connection to server failed: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+
+	printf("Connection to server established, press [ENTER] to send data...\n");
+	pause();
+
+	//sending data to the server
+	const char info_tobesent[7] = "Thomas";
+	int sendcheck = send(clientsock, (const char*)&info_tobesent, sizeof(info_tobesent), NULL);
+	if (sendcheck == SOCKET_ERROR)
+	{
+		printf("Data failed to send to server: %d\n", WSAGetLastError());
+		pause();
+		return 1;
+	}
+	printf("Data sent successfully!");
+
+	//ending the program
 	pause();
 	return 0;
 }

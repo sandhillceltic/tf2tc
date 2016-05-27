@@ -4,6 +4,14 @@
 
 #pragma once
 
+#ifdef UNICODE
+#undef UNICODE
+#endif
+
+#ifdef _UNICODE
+#undef _UNICODE
+#endif
+
 #include "targetver.h"
 
 #include <stdio.h>
